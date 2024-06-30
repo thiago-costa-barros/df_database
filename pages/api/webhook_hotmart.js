@@ -25,17 +25,7 @@ export default async function handler(req, res) {
 
     try {
       const data = req.body;
-      console.log(data.id)
-      // Logar todos os objetos antes de criar o novo usuário
-      // console.log('Data:', data);
-      // console.log('Produto:', data.data.product);
-      // console.log('Afiliados:', data.data.affiliates);
-      // console.log('Comprador:', data.data.buyer);
-      // console.log('Endereço:', data.data.buyer.address);
-      // console.log('Produtor:', data.data.producer);
-      // console.log('Comissões:', data.data.commissions);
-      // console.log('Compra:', data.data.purchase);
-
+      
       if (!prisma) {
         throw new Error('Prisma Client não instanciado corretamente');
       }
