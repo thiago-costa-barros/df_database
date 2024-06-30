@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   console.log('Iniciando handler'); // Log de debug
   if (req.method === 'POST') {
     console.log('Método POST recebido'); // Log de debug
-    const token = req.headers['token'];
+    const token = process.env.MY_SECRET_TOKEN;
     const receivedToken = req.headers['x-hotmart-hottok'];
 
     const MY_SECRET_TOKEN = process.env.MY_SECRET_TOKEN;
