@@ -12,8 +12,62 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-model TestUser {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model ExternalWebhookHotmartReceiver {
+  id                                                String       @id 
+  creationDate                                      DateTime
+  event                                             String?
+  version                                           String?
+  productId                                         Int?
+  productUcode                                      String?
+  productName                                       String?
+  productHasCoProduction                            Boolean?
+  affiliateCode                                     String?
+  affiliateName                                     String?
+  buyerEmail                                        String?
+  buyerName                                         String?
+  buyerCheckoutPhone                                String?
+  buyerZipcode                                      String?
+  buyerCountry                                      String?
+  buyerNumber                                       String?
+  buyerAddress                                      String?
+  buyerCity                                         String?
+  buyerState                                        String?
+  buyerNeighborhood                                 String?
+  buyerComplement                                   String?
+  buyerCountryIso                                   String?
+  producerName                                      String?
+  commissionValue1                                  Float?
+  commissionCurrencyValue1                          String?
+  commissionSource1                                 String?
+  purchaseApprovedDate                              DateTime?
+  purchaseFullPriceValue                            Float?
+  purchaseFullPriceCurrencyValue                    String?
+  purchaseOriginalOfferPriceCurrencyValue           String?
+  purchaseOriginalOfferPriceValue                   Float?
+  purchasePriceValue                                Float?
+  purchasePriceCurrencyValue                        String?
+  purchaseOfferCode                                 String?
+  purchaseRecurrenceNumber                          Int?
+  purchaseSubscriptionAnticipationPurchase          Boolean?
+  purchaseCheckoutCountryName                       String?
+  purchaseCheckoutCountryIso                        String?
+  purchaseOriginXcod                                String?
+  purchaseOrderBumpIsOrderBump                      Boolean?
+  purchaseOrderBumpParentPurchaseTransaction        String?
+  purchaseOrderDate                                 String?
+  purchaseDateNextCharge                            DateTime?
+  purchaseStatus                                    String?
+  purchaseTransaction                               String?
+  paymentBilletBarcode                              String?
+  paymentBilletUrl                                  String?
+  paymentInstallmentsNumber                         Int?
+  paymentPixCode                                    String?
+  paymentPixExpirationDate                          DateTime?
+  paymentPixQrCode                                  String?
+  paymentRefusalReason                              String?
+  paymentType                                       String?
+  subscriptionStatus                                String?
+  subscriptionPlanId                                Int?
+  subscriptionPlanName                              String?
+  subscriptionSubscriberCode                        String?
 }
