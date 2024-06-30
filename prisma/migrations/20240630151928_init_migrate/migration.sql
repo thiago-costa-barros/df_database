@@ -1,16 +1,10 @@
-/*
-  Warnings:
-
-  - You are about to drop the `external_webhook_hotmart_receiver` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE "external_webhook_hotmart_receiver";
-
 -- CreateTable
 CREATE TABLE "ExternalWebhookHotmartReceiver" (
-    "id" TEXT NOT NULL,
-    "creationDate" TIMESTAMP(3) NOT NULL,
+    "id" SERIAL NOT NULL,
+    "eventId" TEXT NOT NULL,
+    "creationDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updateDate" TIMESTAMP(3) NOT NULL,
+    "eventDate" TIMESTAMP(3) NOT NULL,
     "event" TEXT,
     "version" TEXT,
     "productId" INTEGER,
