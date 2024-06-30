@@ -13,8 +13,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model ExternalWebhookHotmartReceiver {
-  id                                                String       @id 
-  creationDate                                      DateTime
+  id                                                String        @id 
+  creationDate                                      DateTime      @default(now())
+  updateDate                                        DateTime      @default(now())
+  eventDate                                         DateTime      
   event                                             String?
   version                                           String?
   productId                                         Int?

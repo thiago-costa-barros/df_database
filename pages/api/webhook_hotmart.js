@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         console.log('Dados recebidos do webhook:', data); // Log de debug
         console.log('Comprador:', data.data.buyer);
 
-        const newUser = await prisma.testUser.create({
+        const newUser = await prisma.externalWebhookHotmartReceiver.create({
           data: {
             name: data.data.buyer.name,
             email: data.data.buyer.email,
