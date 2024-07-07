@@ -6,71 +6,25 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public","df_migrationsystem", "df_externalsystem","df_servicesystem"]
 }
 model ExternalWebhookHotmartReceiver {
-  id                                                Int        @id  @default(autoincrement())
-  eventId                                           String
-  creationDate                                      DateTime      @default(now())
-  updateDate                                        DateTime      @updatedAt
-  eventDate                                         DateTime      
-  event                                             String?
-  version                                           String?
-  productId                                         Int?
-  productUcode                                      String?
-  productName                                       String?
-  productHasCoProduction                            Boolean?
-  affiliateCode                                     String?
-  affiliateName                                     String?
-  buyerEmail                                        String?
-  buyerName                                         String?
-  buyerCheckoutPhone                                String?
-  buyerZipcode                                      String?
-  buyerCountry                                      String?
-  buyerNumber                                       String?
-  buyerAddress                                      String?
-  buyerCity                                         String?
-  buyerState                                        String?
-  buyerNeighborhood                                 String?
-  buyerComplement                                   String?
-  buyerCountryIso                                   String?
-  producerName                                      String?
-  commissionValue1                                  Float?
-  commissionCurrencyValue1                          String?
-  commissionSource1                                 String?
-  purchaseApprovedDate                              DateTime?
-  purchaseFullPriceValue                            Float?
-  purchaseFullPriceCurrencyValue                    String?
-  purchaseOriginalOfferPriceCurrencyValue           String?
-  purchaseOriginalOfferPriceValue                   Float?
-  purchasePriceValue                                Float?
-  purchasePriceCurrencyValue                        String?
-  purchaseOfferCode                                 String?
-  purchaseRecurrenceNumber                          Int?
-  purchaseSubscriptionAnticipationPurchase          Boolean?
-  purchaseCheckoutCountryName                       String?
-  purchaseCheckoutCountryIso                        String?
-  purchaseOriginXcod                                String?
-  purchaseOrderBumpIsOrderBump                      Boolean?
-  purchaseOrderBumpParentPurchaseTransaction        String?
-  purchaseOrderDate                                 String?
-  purchaseDateNextCharge                            DateTime?
-  purchaseStatus                                    String?
-  purchaseTransaction                               String?
-  paymentBilletBarcode                              String?
-  paymentBilletUrl                                  String?
-  paymentInstallmentsNumber                         Int?
-  paymentPixCode                                    String?
-  paymentPixExpirationDate                          DateTime?
-  paymentPixQrCode                                  String?
-  paymentRefusalReason                              String?
-  paymentType                                       String?
-  subscriptionStatus                                String?
-  subscriptionPlanId                                Int?
-  subscriptionPlanName                              String?
-  subscriptionSubscriberCode                        String?
+  id            Int                  @map("ExternalWebhookHotmartReceiverId")@id @default(autoincrement())
+  creationDate  DateTime             @map("CreationDate")@default(now())
+  updateDate    DateTime             @map("UpdateDate")@updatedAt
+  deletionDate  DateTime?            @map("DeletionDate")
+  requestId     String               @map("RequestId")
+  eventDate     DateTime             @map("EventDate")
+  eventName     String               @map("EventName")
+  version       String               @map("Version")
+  payload       Json                 @map("Payload")
+
+  @@map("ExternalWebhookHotmartReceiver")
+  @@schema("df_externalsystem")
 }
