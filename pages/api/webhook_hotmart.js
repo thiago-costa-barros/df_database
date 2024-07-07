@@ -7,29 +7,29 @@ import { verifyToken } from './utils/tokenVerification';
 dotenv.config();
 
 export default async function handler(req, res) {
-  console.log('Iniciando handler'); // Log de debug
+  console.log('Starting handler'); // Log de debug
   if (req.method === 'POST') {
-    console.log('Método POST recebido'); // Log de debug
+    console.log('Method POST received'); // Log de debug
 
     if (!verifyToken(req)) {
-      console.log('Tokens inválidos, acesso negado'); // Log de debug
+      console.log('Invalid tokens, access denied'); // Log de debug
       return res.status(403).json({ message: 'Forbidden' });
     }
 
     try {
       const data = req.body;
-      console.log(data);
+      console.log("Webhook received: ",data.event);
 
       if (!prisma) {
-        throw new Error('Prisma Client não instanciado corretamente');
+        throw new Error('Prisma Client not instantiated correctly');
       }
 
       // Verifique se o modelo está definido no Prisma Client
       if (!prisma.externalWebhookHotmartReceiver) {
-        throw new Error('Modelo ExternalWebhookHotmartReceiver não encontrado no Prisma Client');
+        throw new Error('Model ExternalWebhookHotmartReceiver not founded in Prisma Client');
       }
       const parseDate = (bigintDate) => bigintDate ? new Date(parseInt(bigintDate)) : null;
-      const newUser = await prisma.externalWebhookHotmartReceiver.create({
+      const newExternalWebhookHotmartReceiver = await prisma.externalWebhookHotmartReceiver.create({
         data: {
           requestId: data.id,
           eventDate: parseDate(data.creation_date),
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
         }
       });
 
-      console.log('Nova mensagem recebida:', newUser);
+      console.log("New ExternalWebhookHotmartReceiver insert: ",newExternalWebhookHotmartReceiver.eventName);
 
       res.status(200).json({ message: 'Webhook received successfully' });
     } catch (error) {
