@@ -5,26 +5,184 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public","df_migrationsystem", "df_externalsystem","df_servicesystem"]
+  schemas  = ["public", "df_migrationsystem", "df_externalsystem", "df_servicesystem"]
 }
+
 model ExternalWebhookHotmartReceiver {
-  id            Int                  @map("ExternalWebhookHotmartReceiverId")@id @default(autoincrement())
-  creationDate  DateTime             @map("CreationDate")@default(now())
-  updateDate    DateTime             @map("UpdateDate")@updatedAt
-  deletionDate  DateTime?            @map("DeletionDate")
-  requestId     String               @map("RequestId")
-  eventDate     DateTime             @map("EventDate")
-  eventName     String               @map("EventName")
-  version       String               @map("Version")
-  payload       Json                 @map("Payload")
+  id               Int                @id @default(autoincrement()) @map("ExternalWebhookHotmartReceiverId")
+  creationDate     DateTime           @default(now()) @map("CreationDate")
+  updateDate       DateTime           @updatedAt @map("UpdateDate")
+  deletionDate     DateTime?          @map("DeletionDate")
+  requestId        String             @map("RequestId")
+  eventDate        DateTime           @map("EventDate")
+  eventName        String             @map("EventName")
+  version          String             @map("Version")
+  payload          Json               @map("Payload")
+  HotmartOrderNote HotmartOrderNote[]
 
   @@map("ExternalWebhookHotmartReceiver")
   @@schema("df_externalsystem")
+}
+
+model HotmartOrderNote {
+  id                               Int                            @id @default(autoincrement()) @map("HotmartOrderNoteId")
+  creationDate                     DateTime                       @default(now()) @map("CreationDate")
+  updateDate                       DateTime                       @updatedAt @map("UpdateDate")
+  deletionDate                     DateTime?                      @map("DeletionDate")
+  externalWebhookHotmartReceiverId Int                            @map("ExternalWebhookHotmartReceiverId")
+  externalWebhookHotmartReceiver   ExternalWebhookHotmartReceiver @relation(fields: [externalWebhookHotmartReceiverId], references: [id])
+  hotmartProductId                 Int                            @map("HotmartProductId")
+  hotmartProduct                   HotmartProduct                 @relation(fields: [hotmartProductId], references: [id])
+  hotmartAffiliates                HotmartAffiliates[]
+  hotmartBuyerId                   Int                            @map("HotmartBuyerId")
+  hotmartBuyer                     HotmartBuyer                   @relation(fields: [hotmartBuyerId], references: [id])
+  producerName                     String?                        @map("HotmartProducerName")
+  hotmartComissions                HotmartComissions[]
+  hotmartPurchaseTransactionId     String                         @map("HotmartPurchaseTransActionId")
+  hotmartPurchase                  HotmartPurchase                @relation(fields: [hotmartPurchaseTransactionId], references: [transactionId])
+  hotmartSubscriptionId            Int?                           @map("HotmartSubscriptionId")
+  hotmartSubscription              HotmartSubscription?           @relation(fields: [hotmartSubscriptionId], references: [id])
+
+  @@map("HotmartOrderNote")
+  @@schema("df_servicesystem")
+}
+
+model HotmartProduct {
+  id                     Int                @id @map("HotmartProductId")
+  creationDate           DateTime           @default(now()) @map("CreationDate")
+  updateDate             DateTime           @updatedAt @map("UpdateDate")
+  deletionDate           DateTime?          @map("DeletionDate")
+  productUcode           String             @map("HotmartProductUcode")
+  productName            String             @map("HotmartProductName")
+  productHasCoProduction Boolean            @map("HotmartProductHasCoProduction")
+  HotmartOrderNote       HotmartOrderNote[]
+
+  @@map("HotmartProduct")
+  @@schema("df_servicesystem")
+}
+
+model HotmartAffiliates {
+  id                 Int               @id @default(autoincrement()) @map("HotmartAffiliatesId")
+  creationDate       DateTime          @default(now()) @map("CreationDate")
+  updateDate         DateTime          @updatedAt @map("UpdateDate")
+  deletionDate       DateTime?         @map("DeletionDate")
+  affiliateCode      String?           @unique @map("HotmartAffiliateCode")
+  affiliateName      String?           @map("HotmartAffiliateName")
+  HotmartOrderNote   HotmartOrderNote? @relation(fields: [hotmartOrderNoteId], references: [id])
+  hotmartOrderNoteId Int?
+
+  @@map("HotmartAffiliates")
+  @@schema("df_servicesystem")
+}
+
+model HotmartBuyer {
+  id                       Int                @id @default(autoincrement()) @map("HotmartBuyerId")
+  creationDate             DateTime           @default(now()) @map("CreationDate")
+  updateDate               DateTime           @updatedAt @map("UpdateDate")
+  deletionDate             DateTime?          @map("DeletionDate")
+  buyerEmail               String             @unique @map("HotmartBuyerEmail")
+  buyerDocument            String?            @map("HotmartBuyerDocument")
+  buyerName                String?            @map("HotmartBuyerName")
+  buyerCheckoutPhone       String?            @map("HotmartBuyerPhone")
+  buyerAddressCountryIso   String?            @map("HotmartBuyerAddressCountryIso")
+  buyerAddressCountry      String?            @map("HotmartBuyerAddressCountry")
+  buyerAddressZipCode      String?            @map("HotmartBuyerAddressZipCode")
+  buyerAddressState        String?            @map("HotmartBuyerAddressState")
+  buyerAddressCity         String?            @map("HotmartBuyerAddressCity")
+  buyerAddressNeighborhood String?            @map("HotmartBuyerAddressNeighborhood")
+  buyerAddressStreet       String?            @map("HotmartBuyerAddressStreet")
+  buyerAddressComplement   String?            @map("HotmartBuyerAddressComplement")
+  buyerAddressNumber       String?            @map("HotmartBuyerAddressNumber")
+  HotmartOrderNote         HotmartOrderNote[]
+
+  @@map("HotmartBuyer")
+  @@schema("df_servicesystem")
+}
+
+model HotmartComissions {
+  id                  Int               @id @default(autoincrement()) @map("HotmartComissionsId")
+  creationDate        DateTime          @default(now()) @map("CreationDate")
+  updateDate          DateTime          @updatedAt @map("UpdateDate")
+  deletionDate        DateTime?         @map("DeletionDate")
+  sourceName          String?           @map("HotmartComissionsSourceName")
+  value               Decimal?          @map("HotmartComissionsValue")
+  convertedToCurrency String?           @map("HotmartComissionsConvertedToCurrency")
+  convertedvalue      Decimal?          @map("HotmartComissionsConvertedValue")
+  currencyConvertion  String?           @map("HotmartComissionsCurrencyConvertion")
+  HotmartOrderNote    HotmartOrderNote? @relation(fields: [hotmartOrderNoteId], references: [id])
+  hotmartOrderNoteId  Int?
+
+  @@map("HotmartComissions")
+  @@schema("df_servicesystem")
+}
+
+model HotmartPurchase {
+  id                               Int                   @id @default(autoincrement()) @map("HotmartPurchaseId")
+  creationDate                     DateTime              @default(now()) @map("CreationDate")
+  updateDate                       DateTime              @updatedAt @map("UpdateDate")
+  deletionDate                     DateTime?             @map("DeletionDate")
+  orderDate                        DateTime              @map("HotmartPurchaseOrderDate")
+  approvedDate                     DateTime              @map("HotmartPurchaseApprovedDate")
+  transactionId                    String                @unique @map("HotmartPurchaseTransactionId")
+  status                           String                @map("Status")
+  fullPriceValue                   Decimal               @map("HotmartPurchaseFullPriceValue")
+  fullPriceCurrency                String                @map("HotmartPurchaseFullPriceCurrency")
+  originalPriceValue               Decimal               @map("HotmartPurchaseOriginalPriceValue")
+  originalPriceCurrency            String                @map("HotmartPurchaseOriginalPriceCurrency")
+  priceValue                       Decimal               @map("HotmartPurchasePriceValue")
+  priceCurrency                    String                @map("HotmartPurchasePriceCurrency")
+  offerCode                        String                @map("HotmartPurchaseOfferCode")
+  recurrencyNumber                 Int?                  @map("HotmartPurchaseRecurrencyNumber")
+  subscriptionAnticipationPurchase Boolean?              @map("HotmartPurchaseSubscriptionAnticipationPurchase")
+  checkoutCountryName              String                @map("HotmartPurchaseCheckoutCountryName")
+  checkoutCountryISO               String                @map("HotmartPurchaseCheckoutCountryISO")
+  utmCode                          String?               @map("HotmartPurchaseUtmCode")
+  isOrderBump                      Boolean?              @map("HotmartPurchaseIsOrderBump")
+  originalTransactionId            String?               @map("HotmartPurchaseOriginalTransactionId")
+  nextChargeDate                   DateTime?             @map("HotmartNextChargeDate")
+  hotmartPaymentInfos              HotmartPaymentInfos[]
+  HotmartOrderNote                 HotmartOrderNote[]
+
+  @@map("HotmartPurchase")
+  @@schema("df_servicesystem")
+}
+
+model HotmartPaymentInfos {
+  id                 Int              @id @default(autoincrement()) @map("HotmartPaymentInfosId")
+  creationDate       DateTime         @default(now()) @map("CreationDate")
+  updateDate         DateTime         @updatedAt @map("UpdateDate")
+  deletionDate       DateTime?        @map("DeletionDate")
+  barcode            String?          @map("HotmartPaymentInfosBarcode")
+  billetUrl          String?          @map("HotmartPaymentInfosBilletUrl")
+  pixCode            String?          @map("HotmartPaymentInfosPixCode")
+  pixQRCode          String?          @map("HotmartPaymentInfosPixQRCode")
+  pixExpirationDate  String?          @map("HotmartPaymentInfosPixExpirationDate")
+  type               String?          @map("HotmartPaymentInfosType")
+  refusalReason      String?          @map("HotmartPaymentInfosRefusalReason")
+  installmentNumbers String?          @map("HotmartPaymentInfosInstallmentNumbers")
+  HotmartPurchase    HotmartPurchase? @relation(fields: [hotmartPurchaseId], references: [id])
+  hotmartPurchaseId  Int?
+
+  @@map("HotmartPaymentInfos")
+  @@schema("df_servicesystem")
+}
+
+model HotmartSubscription {
+  id               Int                @id @map("HotmartSubscriptionId")
+  creationDate     DateTime           @default(now()) @map("CreationDate")
+  updateDate       DateTime           @updatedAt @map("UpdateDate")
+  deletionDate     DateTime?          @map("DeletionDate")
+  subscriptionName String?            @map("HotmartSubscriptionName")
+  subscriberCode   String?            @map("HotmartSubscriberCode")
+  HotmartOrderNote HotmartOrderNote[]
+
+  @@map("HotmartSubscription")
+  @@schema("df_servicesystem")
 }
