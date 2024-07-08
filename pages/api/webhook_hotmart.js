@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
       res.status(200).json({ message: 'Webhook received successfully' });
     } catch (error) {
-      console.error('Erro ao processar o webhook:', error);
+      console.error('Error processing webhook:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
   } else {
