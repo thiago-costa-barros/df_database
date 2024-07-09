@@ -3,6 +3,7 @@
 import dotenv from 'dotenv';
 import prisma from "/app/_lib/prisma";
 import { verifyToken } from './utils/tokenVerification';
+import { routeEventHotmartWebhook } from './webhook_hotmart_events/eventWebhookRoute';
 
 dotenv.config();
 
@@ -42,6 +43,8 @@ export default async function handler(req, res) {
       console.log("New ExternalWebhookHotmartReceiver insert: ",newExternalWebhookHotmartReceiver.eventName);
 
       res.status(200).json({ message: 'Webhook received successfully' });
+
+      await routeEventHotmartWebhook(data.event, data.data);
     } catch (error) {
       console.error('Error processing webhook:', error);
       res.status(500).json({ message: 'Internal Server Error' });
