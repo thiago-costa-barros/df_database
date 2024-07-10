@@ -20,7 +20,7 @@ model ExternalWebhookHotmartReceiver {
   creationDate     DateTime           @default(now()) @map("CreationDate")
   updateDate       DateTime           @updatedAt @map("UpdateDate")
   deletionDate     DateTime?          @map("DeletionDate")
-  requestId        String             @map("RequestId")
+  requestId        String             @map("RequestId") 
   eventDate        DateTime           @map("EventDate")
   eventName        String             @map("EventName")
   version          String             @map("Version")
@@ -107,17 +107,18 @@ model HotmartBuyer {
 }
 
 model HotmartComissions {
-  id                  Int               @id @default(autoincrement()) @map("HotmartComissionsId")
-  creationDate        DateTime          @default(now()) @map("CreationDate")
-  updateDate          DateTime          @updatedAt @map("UpdateDate")
-  deletionDate        DateTime?         @map("DeletionDate")
-  sourceName          String?           @map("HotmartComissionsSourceName")
-  value               Decimal?          @map("HotmartComissionsValue")
-  convertedToCurrency String?           @map("HotmartComissionsConvertedToCurrency")
-  convertedvalue      Decimal?          @map("HotmartComissionsConvertedValue")
-  currencyConvertion  String?           @map("HotmartComissionsCurrencyConvertion")
-  HotmartOrderNote    HotmartOrderNote? @relation(fields: [hotmartOrderNoteId], references: [id])
-  hotmartOrderNoteId  Int?
+  id                      Int               @id @default(autoincrement()) @map("HotmartComissionsId")
+  creationDate            DateTime          @default(now()) @map("CreationDate")
+  updateDate              DateTime          @updatedAt @map("UpdateDate")
+  deletionDate            DateTime?         @map("DeletionDate")
+  sourceName              String?           @map("HotmartComissionsSourceName")
+  value                   Decimal?          @map("HotmartComissionsValue")
+  currencyValue           String?           @map("HotmartComissionsCurrencyValue")
+  convertedToCurrency     String?           @map("HotmartComissionsConvertedToCurrency")
+  convertedvalue          Decimal?          @map("HotmartComissionsConvertedValue")
+  currencyConvertionRate  Decimal?           @map("HotmartComissionsCurrencyConvertionRate")
+  HotmartOrderNote        HotmartOrderNote? @relation(fields: [hotmartOrderNoteId], references: [id])
+  hotmartOrderNoteId      Int?
 
   @@map("HotmartComissions")
   @@schema("df_servicesystem")
@@ -181,6 +182,7 @@ model HotmartSubscription {
   deletionDate     DateTime?          @map("DeletionDate")
   subscriptionName String?            @map("HotmartSubscriptionName")
   subscriberCode   String?            @map("HotmartSubscriberCode")
+  subscriberStatus String?            @map("HotmartSubscriberStatus")
   HotmartOrderNote HotmartOrderNote[]
 
   @@map("HotmartSubscription")
