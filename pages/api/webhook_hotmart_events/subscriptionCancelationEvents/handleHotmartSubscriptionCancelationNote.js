@@ -4,9 +4,9 @@ import prisma from "/app/_lib/prisma";
 
 export async function handleHotmartSubscriptionCancelationNote(eventData) {
     try {
-        const eventsSubscriptionCancelationData = await {
-
-        }
+        // const eventsSubscriptionCancelationData = await {
+        //     true
+        // }
     } catch (error) {
         
     }
