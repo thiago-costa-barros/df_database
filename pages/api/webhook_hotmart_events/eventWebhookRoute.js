@@ -25,4 +25,3 @@ export async function routeEventHotmartWebhook(eventName, eventData){
             break;
     }
 }
-//UpdateSubscriptionDateCharge
