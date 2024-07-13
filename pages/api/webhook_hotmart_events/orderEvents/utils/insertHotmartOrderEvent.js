@@ -107,7 +107,41 @@ export async function insertHotmartOrderEvent(eventData) {
         else {
             console.log('There is no subscription data in dataEvent')
         };
-        
+        let hotmartPurchase = await prisma.hotmartPurchase.findUnique({
+            where: {
+                transactionId: payload.purchase.transaction,
+            },
+        });
+        if (!hotmartPurchase) {
+            console.log('Creating a new HotmartPurchase:')
+            hotmartPurchase = await prisma.hotmartPurchase.create({
+                data: {
+                    transactionId: payload.purchase.transaction,
+                    orderDate: payload.purchase.order_date,
+                    approvedDate: payload.purchase.approved_date,
+                    status: payload.purchase.status,
+                    fullPriceValue: payload.purchase.full_price?.value,
+                    fullPriceCurrency: payload.purchase.full_price?.currency_value,
+                    originalPriceValue: payload.purchase.original_offer_price?.value,
+                    originalPriceCurrency: payload.purchase.original_offer_price?.currency_value,
+                    priceValue: payload.purchase.price?.value,
+                    priceCurrency: payload.purchase.price?.currency_value,
+                    offerCode: payload.purchase.offer?.code,
+                    recurrencyNumber: payload.purchase.recurrency_number,
+                    subscriptionAnticipationPurchase: payload.purchase.subscription_anticipation_purchase,
+                    checkoutCountryName: payload.purchase.checkout_country_name,
+                    checkoutCountryISO: payload.purchase.checkout_country_iso,
+                    utmCode: payload.purchase.origin?.code,
+                    isOrderBump: payload.purchase.order_bump?.is_order_bump,
+                    originalTransactionId: payload.purchase.order_bump?.parent_purchase_transaction,
+                    nextChargeDate: payload.purchase.date_next_charge,
+                },
+            });
+        }
+        else {
+            console.log('TransactionId already exists in our database');
+        };
+        console.log('Creating a new HotmartComissions:')
 
         let hotmartComissions = null;
         if (!hotmartComissions) {
