@@ -2,9 +2,11 @@
 
 import prisma from "/app/_lib/prisma";
 
-async function insertHotmartOrderEvent(eventData) {
+export async function insertHotmartOrderEvent(eventData) {
     try {
         const payload = eventData.payload;
+
+        console.log('Check if there is already a record with the same HotmartProductId in our database');
 
         let hotmartProduct = await prisma.hotmartProduct.findUnique({
             where: {
@@ -12,6 +14,7 @@ async function insertHotmartOrderEvent(eventData) {
             },
         });
         if (!hotmartProduct) {
+            console.log('ProductId does not exist in our database, creating a new one:');
             hotmartProduct = await prisma.hotmartProduct.create({
                 data: {
                     id: payload?.product?.id,
@@ -21,6 +24,10 @@ async function insertHotmartOrderEvent(eventData) {
                 },
             });
         }
+        else {
+            console.log('ProductId already exists in our database');
+        }
+        console.log('Check if there is already a record with the same HotmartBuyerEmail in our database');
 
         let hotmartBuyer = await prisma.hotmartBuyer.findUnique({
             where: {
@@ -28,6 +35,7 @@ async function insertHotmartOrderEvent(eventData) {
             },
         });
         if (!hotmartBuyer) {
+            console.log('BuyerEmail does not exist in our database, creating a new one:');
             hotmartBuyer = await prisma.hotmartBuyer.create({
                 data: {
                     buyerEmail: payload?.buyer?.name,
@@ -45,14 +53,20 @@ async function insertHotmartOrderEvent(eventData) {
                     buyerAddressNumber: payload?.buyer?.address?.number
                 }
             });
+        }
+        else {
+            console.log('BuyerEmail already exists in our database');
         };
+        console.log('Check if there is a affiliate data in dataEvent')
 
         let hotmartAffiliates = null;
         if (payload.affiliate && payload.affiliate.affiliate_code) {
+            console.log('Check if there is already a record with the same HotmartAffiliates in our database');
             hotmartAffiliates = await prisma.hotmartAffiliates.findUnique({
                 where: { affiliateCode: payload.affiliate.affiliate_code },
             });
             if (!hotmartAffiliates) {
+                console.log('AffiliateCode does not exist in our database, creating a new one:');
                 hotmartAffiliates = await prisma.hotmartAffiliates.create({
                     data: {
                         affiliateCode: payload.affiliate.affiliate_code,
@@ -60,14 +74,23 @@ async function insertHotmartOrderEvent(eventData) {
                     },
                 });
             }
+            else {
+                console.log('AffiliateCode already exists in our database');
+            }
+        }
+        else {
+            console.log('There is no affiliate data in dataEvent')
         };
+        console.log('Check if there is a subscription data in dataEvent')
 
         let hotmartSubscription = null;
         if (payload.subscription) {
+            console.log('Check if there is already a record with the same HotmartSubscription in our database');
             hotmartSubscription = await prisma.hotmartSubscription.findUnique({
                 where: { id: payload.subscription.plan.id },
             });
             if (!hotmartSubscription) {
+                console.log('SubscriptionId does not exist in our database, creating a new one:');
                 hotmartSubscription = await prisma.hotmartSubscription.create({
                     data: {
                         id: payload.subscription?.plan?.id,
@@ -77,7 +100,14 @@ async function insertHotmartOrderEvent(eventData) {
                     },
                 });
             }
+            else {
+                console.log('SubscriptionId already exists in our database');
+            };
+        }
+        else {
+            console.log('There is no subscription data in dataEvent')
         };
+        
 
         let hotmartComissions = null;
         if (!hotmartComissions) {
