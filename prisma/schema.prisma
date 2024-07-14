@@ -44,7 +44,6 @@ model HotmartOrderNote {
   hotmartBuyerId                   Int                            @map("HotmartBuyerId")
   hotmartBuyer                     HotmartBuyer                   @relation(fields: [hotmartBuyerId], references: [id])
   producerName                     String?                        @map("HotmartProducerName")
-  hotmartComissions                HotmartComissions[]
   hotmartPurchaseTransactionId     String                         @map("HotmartPurchaseTransActionId")
   hotmartPurchase                  HotmartPurchase                @relation(fields: [hotmartPurchaseTransactionId], references: [transactionId])
   hotmartSubscriptionId            Int?                           @map("HotmartSubscriptionId")
@@ -107,19 +106,17 @@ model HotmartBuyer {
 }
 
 model HotmartComissions {
-  id                     Int               @id @default(autoincrement()) @map("HotmartComissionsId")
-  creationDate           DateTime          @default(now()) @map("CreationDate")
-  updateDate             DateTime          @updatedAt @map("UpdateDate")
-  deletionDate           DateTime?         @map("DeletionDate")
-  sourceName             String?           @map("HotmartComissionsSourceName")
-  value                  Decimal?          @map("HotmartComissionsValue")
-  currencyValue          String?           @map("HotmartComissionsCurrencyValue")
-  convertedToCurrency    String?           @map("HotmartComissionsConvertedToCurrency")
-  convertedvalue         Decimal?          @map("HotmartComissionsConvertedValue")
-  currencyConvertionRate Decimal?          @map("HotmartComissionsCurrencyConvertionRate")
-  HotmartOrderNote       HotmartOrderNote? @relation(fields: [hotmartOrderNoteId], references: [id])
-  hotmartOrderNoteId     Int?
-  HotmartPurchase        HotmartPurchase?  @relation(fields: [hotmartPurchaseId], references: [id])
+  id                     Int              @id @default(autoincrement()) @map("HotmartComissionsId")
+  creationDate           DateTime         @default(now()) @map("CreationDate")
+  updateDate             DateTime         @updatedAt @map("UpdateDate")
+  deletionDate           DateTime?        @map("DeletionDate")
+  sourceName             String?          @map("HotmartComissionsSourceName")
+  value                  Decimal?         @map("HotmartComissionsValue")
+  currencyValue          String?          @map("HotmartComissionsCurrencyValue")
+  convertedToCurrency    String?          @map("HotmartComissionsConvertedToCurrency")
+  convertedvalue         Decimal?         @map("HotmartComissionsConvertedValue")
+  currencyConvertionRate Decimal?         @map("HotmartComissionsCurrencyConvertionRate")
+  HotmartPurchase        HotmartPurchase? @relation(fields: [hotmartPurchaseId], references: [id])
   hotmartPurchaseId      Int?
 
   @@map("HotmartComissions")
