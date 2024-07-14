@@ -21,16 +21,29 @@ export async function handleHotmartOrderNote(eventData) {
             console.log('Check if there is already a record with the same HotmartPurchaseTransactionId in our database')
             const existingHotmartOrderNotePurchaseTransactionId = await prisma.hotmartOrderNote.findFirst({
                 where: {
-                    hotmartPurchaseTransactionId: eventData.payload.purchase?.transaction,
+                    hotmartPurchase: {
+                        transactionId: eventData.payload.purchase?.transaction
+                    },
                     deletionDate: null,
+                },
+                include: {
+                    hotmartPurchase: true
                 },
             });
             if (!existingHotmartOrderNotePurchaseTransactionId) {
                 console.log('HotmartPurchaseTransactionId does not exist in our database, creating a new one HotmartOrderEvent')
                 await insertHotmartOrderEvent(eventData);
+                return {
+                    status:'sucess',
+                    message: 'New HotmartOrderEvent created'
+                }
             }
             else {
                 console.log('There is already a record with this HotmartPurchaseTransactionId in our database', eventData.payload.purchase?.transaction)
+                return {
+                    status:'error',
+                    message: 'Duplicate HotmartPurchaseTransactionId'
+                }
             }
         }
         else {
