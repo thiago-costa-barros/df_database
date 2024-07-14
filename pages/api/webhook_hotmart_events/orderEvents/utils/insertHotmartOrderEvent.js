@@ -5,6 +5,7 @@ import prisma from "/app/_lib/prisma";
 export async function insertHotmartOrderEvent(eventData) {
     try {
         const payload = eventData.payload;
+        const parseDate = (bigintDate) => bigintDate ? new Date(parseInt(bigintDate)) : null;
 
         console.log('Check if there is already a record with the same HotmartProductId in our database');
 
@@ -38,7 +39,7 @@ export async function insertHotmartOrderEvent(eventData) {
             console.log('BuyerEmail does not exist in our database, creating a new one:');
             hotmartBuyer = await prisma.hotmartBuyer.create({
                 data: {
-                    buyerEmail: payload?.buyer?.name,
+                    buyerEmail: payload?.buyer?.email,
                     buyerDocument: payload?.buyer?.document,
                     buyerName: payload?.buyer?.name,
                     buyerCheckoutPhone: payload?.buyer?.checkout_phone,
@@ -59,44 +60,49 @@ export async function insertHotmartOrderEvent(eventData) {
         };
         console.log('Check if there is a affiliate data in dataEvent')
 
-        let hotmartAffiliates = null;
-        if (payload.affiliate && payload.affiliate.affiliate_code) {
+        let affiliates = payload.affiliates || [];
+        let hotmartAffiliates = await Promise.all(affiliates.map(async (affiliate) => {
             console.log('Check if there is already a record with the same HotmartAffiliates in our database');
-            hotmartAffiliates = await prisma.hotmartAffiliates.findUnique({
-                where: { affiliateCode: payload.affiliate.affiliate_code },
+            let existingAffiliate = await prisma.hotmartAffiliates.findUnique({
+                where: {
+                    affiliateCode: affiliate.affiliate_code
+                },
             });
-            if (!hotmartAffiliates) {
+            if (!existingAffiliate) {
                 console.log('AffiliateCode does not exist in our database, creating a new one:');
-                hotmartAffiliates = await prisma.hotmartAffiliates.create({
+                existingAffiliate = await prisma.hotmartAffiliates.create({
                     data: {
-                        affiliateCode: payload.affiliate.affiliate_code,
-                        affiliateName: payload.affiliate.affiliate_name,
+                        affiliateCode: affiliate.affiliate_code,
+                        affiliateName: affiliate.affiliate_name,
                     },
                 });
             }
             else {
                 console.log('AffiliateCode already exists in our database');
             }
-        }
-        else {
+            return existingAffiliate;
+        }));
+        if (!affiliates) {
             console.log('There is no affiliate data in dataEvent')
         };
         console.log('Check if there is a subscription data in dataEvent')
 
         let hotmartSubscription = null;
-        if (payload.subscription) {
+        if (payload?.subscription) {
             console.log('Check if there is already a record with the same HotmartSubscription in our database');
             hotmartSubscription = await prisma.hotmartSubscription.findUnique({
-                where: { id: payload.subscription.plan.id },
+                where: {
+                    id: payload?.subscription?.plan.id
+                },
             });
             if (!hotmartSubscription) {
                 console.log('SubscriptionId does not exist in our database, creating a new one:');
                 hotmartSubscription = await prisma.hotmartSubscription.create({
                     data: {
-                        id: payload.subscription?.plan?.id,
-                        subscriptionName: payload.subscription?.plan?.name,
-                        subscriberCode: payload.subscription?.subscriber?.code,
-                        subscriberStatus: payload.subscription?.status,
+                        id: payload?.subscription?.plan?.id,
+                        subscriptionName: payload?.subscription?.plan?.name,
+                        subscriberCode: payload?.subscription?.subscriber?.code,
+                        subscriberStatus: payload?.subscription?.status,
                     },
                 });
             }
@@ -109,32 +115,32 @@ export async function insertHotmartOrderEvent(eventData) {
         };
         let hotmartPurchase = await prisma.hotmartPurchase.findUnique({
             where: {
-                transactionId: payload.purchase.transaction,
+                transactionId: payload?.purchase?.transaction,
             },
         });
         if (!hotmartPurchase) {
             console.log('Creating a new HotmartPurchase:')
             hotmartPurchase = await prisma.hotmartPurchase.create({
                 data: {
-                    transactionId: payload.purchase.transaction,
-                    orderDate: payload.purchase.order_date,
-                    approvedDate: payload.purchase.approved_date,
-                    status: payload.purchase.status,
-                    fullPriceValue: payload.purchase.full_price?.value,
-                    fullPriceCurrency: payload.purchase.full_price?.currency_value,
-                    originalPriceValue: payload.purchase.original_offer_price?.value,
-                    originalPriceCurrency: payload.purchase.original_offer_price?.currency_value,
-                    priceValue: payload.purchase.price?.value,
-                    priceCurrency: payload.purchase.price?.currency_value,
-                    offerCode: payload.purchase.offer?.code,
-                    recurrencyNumber: payload.purchase.recurrency_number,
-                    subscriptionAnticipationPurchase: payload.purchase.subscription_anticipation_purchase,
-                    checkoutCountryName: payload.purchase.checkout_country_name,
-                    checkoutCountryISO: payload.purchase.checkout_country_iso,
-                    utmCode: payload.purchase.origin?.code,
-                    isOrderBump: payload.purchase.order_bump?.is_order_bump,
-                    originalTransactionId: payload.purchase.order_bump?.parent_purchase_transaction,
-                    nextChargeDate: payload.purchase.date_next_charge,
+                    transactionId: payload?.purchase?.transaction,
+                    orderDate: parseDate(payload?.purchase?.order_date),
+                    approvedDate: parseDate(payload?.purchase?.approved_date),
+                    status: payload?.purchase?.status,
+                    fullPriceValue: payload?.purchase?.full_price?.value,
+                    fullPriceCurrency: payload?.purchase?.full_price?.currency_value,
+                    originalPriceValue: payload?.purchase?.original_offer_price?.value,
+                    originalPriceCurrency: payload?.purchase?.original_offer_price?.currency_value,
+                    priceValue: payload?.purchase?.price?.value,
+                    priceCurrency: payload?.purchase?.price?.currency_value,
+                    offerCode: payload?.purchase?.offer?.code,
+                    recurrencyNumber: payload?.purchase?.recurrency_number,
+                    subscriptionAnticipationPurchase: payload?.purchase?.subscription_anticipation_purchase,
+                    checkoutCountryName: payload?.purchase?.checkout_country?.name,
+                    checkoutCountryISO: payload?.purchase?.checkout_country?.iso,
+                    utmCode: payload?.purchase?.origin?.code,
+                    isOrderBump: payload?.purchase?.order_bump?.is_order_bump,
+                    originalTransactionId: payload?.purchase?.order_bump?.parent_purchase_transaction,
+                    nextChargeDate: payload?.purchase?.date_next_charge,
                 },
             });
         }
@@ -142,20 +148,51 @@ export async function insertHotmartOrderEvent(eventData) {
             console.log('TransactionId already exists in our database');
         };
         console.log('Creating a new HotmartComissions:')
-
-        let hotmartComissions = null;
-        if (!hotmartComissions) {
-            hotmartComissions = await prisma.hotmartComissions.create({
+        let comissions = payload?.commission || [];
+        let hotmartComissions = await Promise.all(comissions.map(async (comission) => {
+            return prisma.hotmartComissions.create({
                 data: {
-                    sourceName: payload.commission?.source,
-                    value: payload.commission?.value,
-                    currencyValue: payload.commission?.currency_value,
-                    convertedToCurrency: payload.commission?.currency_conversion?.converted_to_currency,
-                    convertedvalue: payload.commission?.currency_conversion?.converted_value,
-                    currencyConvertionRate: payload.commission?.currency_conversion?.conversion_rate,
+                    transactionId: hotmartPurchase.transactionId,
+                    sourceName: comission.source,
+                    value: comission.value,
+                    currencyValue: comission.currency_value,
+                    convertedToCurrency: comission.currency_conversion?.converted_to_currency,
+                    convertedvalue: comission.currency_conversion?.converted_value,
+                    currencyConvertionRate: comission.currency_conversion?.conversion_rate,
                 },
             });
-        };
+        }));
+
+        console.log('Creating a new PaymentInfos')
+        let hotmartPaymentInfos = await prisma.hotmartPaymentInfos.create({
+            data: {
+                hotmartPurchaseId: hotmartPurchase.id,
+                barcode: payload?.purchase.payment?.billet_barcode,
+                billetUrl: payload?.purchase.payment?.billet_url,
+                pixCode: payload?.purchase.payment?.pix_code,
+                pixQRCode: payload?.purchase.payment?.pix_qrcode,
+                pixExpirationDate: parseDate(payload?.purchase.payment?.pix_expiration_date),
+                type: payload?.purchase.payment?.type,
+                refusalReason: payload?.purchase.payment?.refusal_reason,
+                installmentNumbers: payload?.purchase.payment?.installments_number,
+            },
+        });
+        console.log('Creating a new HotmartOrderNote')
+        let newHotmartOrderNote = await prisma.hotmartOrderNote.create({
+            data: {
+                externalWebhookHotmartReceiverId: eventData.id,
+                hotmartProductId: hotmartProduct.id,
+                hotmartBuyerId: hotmartBuyer.id,
+                hotmartPurchaseId: hotmartPurchase.id,
+                producerName: payload?.producer?.name,
+                hotmartSubscriptionId: hotmartSubscription ? hotmartSubscription.id : null,
+                hotmartAffiliates: {
+                    connect: hotmartAffiliates.map(affiliate => ({
+                        id: affiliate.id
+                    })),
+                },
+            },
+        });
 
         console.log("New HotmartOrderNote created: ", newHotmartOrderNote);
     } catch (error) {
