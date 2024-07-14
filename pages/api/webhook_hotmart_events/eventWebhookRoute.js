@@ -1,10 +1,10 @@
 "use server";
 
 import { handleHotmartOrderNote } from "./orderEvents/handleHotmartOrderNote";
-import { handleHotmartOutOfCheckoutNote } from "./outOfCheckoutEvents/handleHotmartOutOfCheckoutNote";
-import { handleHotmartSubscriptionCancelationNote } from "./subscriptionCancelationEvents/handleHotmartsubscriptionCancelationNote";
-import { handleHotmartSwitchPlanNote } from "./switchPlanEvents/handleHotmartSwitchPlanNote";
-import { handleHotmartUpdateSubscriptionDateChargeNote } from "./updateSubscriptionDateChargeEvents/handleHotmartUpdateSubscriptionDateChargeNote";
+//import { handleHotmartOutOfCheckoutNote } from "./outOfCheckoutEvents/handleHotmartOutOfCheckoutNote";
+//import { handleHotmartSubscriptionCancelationNote } from "./subscriptionCancelationEvents/handleHotmartsubscriptionCancelationNote";
+//import { handleHotmartSwitchPlanNote } from "./switchPlanEvents/handleHotmartSwitchPlanNote";
+//import { handleHotmartUpdateSubscriptionDateChargeNote } from "./updateSubscriptionDateChargeEvents/handleHotmartUpdateSubscriptionDateChargeNote";
 
 export async function routeEventHotmartWebhook(eventName, eventData){
     console.log(`Routing event: ${eventName}`);
