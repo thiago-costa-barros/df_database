@@ -44,8 +44,8 @@ model HotmartOrderNote {
   hotmartBuyerId                   Int                            @map("HotmartBuyerId")
   hotmartBuyer                     HotmartBuyer                   @relation(fields: [hotmartBuyerId], references: [id])
   producerName                     String?                        @map("HotmartProducerName")
-  hotmartPurchaseTransactionId     String                         @map("HotmartPurchaseTransActionId")
-  hotmartPurchase                  HotmartPurchase                @relation(fields: [hotmartPurchaseTransactionId], references: [transactionId])
+  hotmartPurchaseId                Int                            @map("HotmartPurchaseId")
+  hotmartPurchase                  HotmartPurchase                @relation(fields: [hotmartPurchaseId], references: [id])
   hotmartSubscriptionId            Int?                           @map("HotmartSubscriptionId")
   hotmartSubscription              HotmartSubscription?           @relation(fields: [hotmartSubscriptionId], references: [id])
 
@@ -164,10 +164,10 @@ model HotmartPaymentInfos {
   billetUrl          String?          @map("HotmartPaymentInfosBilletUrl")
   pixCode            String?          @map("HotmartPaymentInfosPixCode")
   pixQRCode          String?          @map("HotmartPaymentInfosPixQRCode")
-  pixExpirationDate  String?          @map("HotmartPaymentInfosPixExpirationDate")
+  pixExpirationDate  DateTime?        @map("HotmartPaymentInfosPixExpirationDate")
   type               String?          @map("HotmartPaymentInfosType")
   refusalReason      String?          @map("HotmartPaymentInfosRefusalReason")
-  installmentNumbers String?          @map("HotmartPaymentInfosInstallmentNumbers")
+  installmentNumbers Int?             @map("HotmartPaymentInfosInstallmentNumbers")
   HotmartPurchase    HotmartPurchase? @relation(fields: [hotmartPurchaseId], references: [id])
   hotmartPurchaseId  Int?
 
