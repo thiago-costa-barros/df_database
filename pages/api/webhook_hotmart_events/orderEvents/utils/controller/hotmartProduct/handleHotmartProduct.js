@@ -18,7 +18,7 @@ export async function handleHotmartProduct(eventData) {
         else {
             console.log('ProductId already exists in our database, updating it:');
             await updateHotmartProduct(eventData);
-        }
+        };
         return hotmartProduct;
     } catch (error) {
         console.error('Error inserting HotmartProduct:', error);

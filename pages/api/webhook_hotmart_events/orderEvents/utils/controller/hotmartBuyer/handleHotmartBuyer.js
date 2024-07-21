@@ -22,5 +22,6 @@ export async function handleHotmartBuyer (eventData){
         return hotmartBuyer;
     } catch (error) {
         console.error('Error handling Hotmart buyer:', error);
+        throw error;
     }
 }
