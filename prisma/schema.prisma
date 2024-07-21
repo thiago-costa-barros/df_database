@@ -58,6 +58,7 @@ model HotmartProduct {
   creationDate           DateTime           @default(now()) @map("CreationDate")
   updateDate             DateTime           @updatedAt @map("UpdateDate")
   deletionDate           DateTime?          @map("DeletionDate")
+  lastOrderDate          DateTime?          @map("HotmartProductLastOrderDate")
   productUcode           String             @map("HotmartProductUcode")
   productName            String             @map("HotmartProductName")
   productHasCoProduction Boolean            @map("HotmartProductHasCoProduction")
@@ -99,6 +100,7 @@ model HotmartBuyer {
   buyerAddressStreet       String?            @map("HotmartBuyerAddressStreet")
   buyerAddressComplement   String?            @map("HotmartBuyerAddressComplement")
   buyerAddressNumber       String?            @map("HotmartBuyerAddressNumber")
+  lastOrderDate            DateTime?          @map("HotmartBuyerLastOrderDate")
   HotmartOrderNote         HotmartOrderNote[]
 
   @@map("HotmartBuyer")
