@@ -73,6 +73,7 @@ model HotmartAffiliates {
   creationDate       DateTime          @default(now()) @map("CreationDate")
   updateDate         DateTime          @updatedAt @map("UpdateDate")
   deletionDate       DateTime?         @map("DeletionDate")
+  lastOrderDate      DateTime?          @map("HotmartAffiliateLastOrderDate")
   affiliateCode      String?           @unique @map("HotmartAffiliateCode")
   affiliateName      String?           @map("HotmartAffiliateName")
   HotmartOrderNote   HotmartOrderNote? @relation(fields: [hotmartOrderNoteId], references: [id])
