@@ -2,7 +2,7 @@
 
 import prisma from "/app/_lib/prisma";
 
-export async function updateHotmartOrderNote(eventData, existingHotmartOrderNotePurchaseTransactionId) {
+export async function updateHotmartOrderNote(existingHotmartOrderNotePurchaseTransactionId) {
     try {
         let updateHotmartOrderNote = await prisma.hotmartOrderNote.update({
             where: {
@@ -12,6 +12,7 @@ export async function updateHotmartOrderNote(eventData, existingHotmartOrderNote
                 updateDate: new Date(),
             },
         });
+        console.log('HotmartOrderNote updated successfully: ', existingHotmartOrderNotePurchaseTransactionId);
         return updateHotmartOrderNote;
     } catch (error) {
         console.error('Error updating HotmartOrderNote:', error);

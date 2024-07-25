@@ -16,7 +16,7 @@ export async function updateHotmartOrderEvent(eventData, existingHotmartOrderNot
         await updateHotmartPurchase(eventData, parseDate, hotmartPurchase.status);
 
         console.log('Updating HotmartOrderNote: ', existingHotmartOrderNotePurchaseTransactionId.id);
-        await updateHotmartOrderNote(eventData, existingHotmartOrderNotePurchaseTransactionId);
+        await updateHotmartOrderNote(existingHotmartOrderNotePurchaseTransactionId);
     } catch (error) {
         console.error('Error updating HotmartOrderNote: ', error);
         throw error;
