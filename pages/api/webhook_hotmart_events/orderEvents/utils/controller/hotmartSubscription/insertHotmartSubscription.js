@@ -4,9 +4,9 @@ import prisma from "/app/_lib/prisma";
 
 export async function insertHotmartSubscription(eventData){
     try {
-        hotmartSubscription = await prisma.hotmartSubscription.create({
+        let hotmartSubscription = await prisma.hotmartSubscription.create({
             data: {
-                id: eventData.payload?.subscription?.plan?.id,
+                planId: eventData.payload?.subscription?.plan?.id,
                 subscriptionName: eventData.payload?.subscription?.plan?.name,
                 subscriberCode: eventData.payload?.subscription?.subscriber?.code,
                 subscriberStatus: eventData.payload?.subscription?.status,

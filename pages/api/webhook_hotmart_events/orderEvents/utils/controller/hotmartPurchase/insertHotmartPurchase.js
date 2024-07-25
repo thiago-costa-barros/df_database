@@ -4,7 +4,7 @@ import prisma from "/app/_lib/prisma";
 
 export async function insertHotmartPurchase(eventData,parseDate){
     try {
-        hotmartPurchase = await prisma.hotmartPurchase.create({
+        let hotmartPurchase = await prisma.hotmartPurchase.create({
             data: {
                 transactionId: eventData.payload?.purchase?.transaction,
                 orderDate: parseDate(eventData.payload?.purchase?.order_date),
@@ -24,9 +24,10 @@ export async function insertHotmartPurchase(eventData,parseDate){
                 utmCode: eventData.payload?.purchase?.origin?.code,
                 isOrderBump: eventData.payload?.purchase?.order_bump?.is_order_bump,
                 originalTransactionId: eventData.payload?.purchase?.order_bump?.parent_purchase_transaction,
-                nextChargeDate: eventData.payload?.purchase?.date_next_charge,
+                nextChargeDate: parseDate(eventData.payload?.purchase?.date_next_charge),
             },
         });
+        console.log('HotmartPurchase created successfully: ',hotmartPurchase.id );
         return hotmartPurchase;
     } catch (error) {
         console.error('Error inserting HotmartPurchase:', error);

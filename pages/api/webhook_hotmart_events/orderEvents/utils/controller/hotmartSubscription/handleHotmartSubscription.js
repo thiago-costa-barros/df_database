@@ -6,11 +6,11 @@ import prisma from "/app/_lib/prisma";
 export async function handleHotmartSubscription(eventData){
     try {
         let hotmartSubscription = null;
-        if (eventData.payload?.subscription) {
+        if (eventData.payload?.subscription?.plan?.id) {
             console.log('Check if there is already a record with the same HotmartSubscription in our database');
-            hotmartSubscription = await prisma.hotmartSubscription.findUnique({
+            let hotmartSubscription = await prisma.hotmartSubscription.findUnique({
                 where: {
-                    id: eventData.payload?.subscription?.plan.id
+                    planId: eventData.payload?.subscription?.plan?.id
                 },
             });
             if (!hotmartSubscription) {

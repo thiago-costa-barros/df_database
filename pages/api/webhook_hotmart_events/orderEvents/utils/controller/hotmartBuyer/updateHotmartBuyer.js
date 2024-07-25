@@ -4,7 +4,7 @@ import prisma from "/app/_lib/prisma";
 
 export async function updateHotmartBuyer(eventData){
     try {
-        hotmartBuyer = await prisma.hotmartBuyer.update({
+        let hotmartBuyer = await prisma.hotmartBuyer.update({
             where: {
                 buyerEmail: eventData.payload?.buyer?.email,
             },

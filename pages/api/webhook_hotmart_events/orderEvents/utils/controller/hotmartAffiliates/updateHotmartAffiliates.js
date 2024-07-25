@@ -4,7 +4,7 @@ import prisma from "/app/_lib/prisma";
 
 export async function updateHotmartAffiliates(affiliate){
     try {
-        existingAffiliate = await prisma.hotmartAffiliates.update({
+        let existingAffiliate = await prisma.hotmartAffiliates.update({
             where: {
                 affiliateCode: affiliate.affiliate_code,
             },

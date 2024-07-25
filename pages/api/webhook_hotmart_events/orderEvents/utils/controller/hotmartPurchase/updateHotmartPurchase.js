@@ -6,7 +6,7 @@ export async function updateHotmartPurchase(eventData, parseDate, currentStatus)
     try {
         if (currentStatus !== eventData.payload?.purchase?.status) {
             console.log('Updating HotmartPurchase: ', eventData.payload?.purchase?.transaction);
-            hotmartProduct = await prisma.hotmartProduct.update({
+            let hotmartPurchase = await prisma.hotmartPurchase.update({
                 where: {
                     transactionId: eventData.payload?.purchase?.transaction
                 },
@@ -18,11 +18,12 @@ export async function updateHotmartPurchase(eventData, parseDate, currentStatus)
                 }
             });
             console.log('HotmartPurchase updated successfully.');
+            return hotmartPurchase;
         }
         else {
             console.log('No update needed for HotmartPurchase: ', eventData.payload?.purchase?.transaction);
         };
-        return hotmartProduct;
+        return hotmartPurchase;
     } catch (error) {
         console.error('Error updating HotmartPurchase:', error);
         throw error;

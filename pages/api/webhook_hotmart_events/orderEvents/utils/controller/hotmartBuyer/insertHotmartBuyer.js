@@ -4,7 +4,7 @@ import prisma from "/app/_lib/prisma";
 
 export async function insertHotmartBuyer (eventData){
     try {
-        hotmartBuyer = await prisma.hotmartBuyer.create({
+        let hotmartBuyer = await prisma.hotmartBuyer.create({
             data: {
                 buyerEmail: eventData.payload?.buyer?.email,
                 buyerDocument: eventData.payload?.buyer?.document,

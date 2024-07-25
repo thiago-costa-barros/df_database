@@ -4,7 +4,7 @@ import prisma from "/app/_lib/prisma";
 
 export async function updateHotmartProduct (eventData){
     try {
-        hotmartProduct = await prisma.hotmartProduct.update({
+        let hotmartProduct = await prisma.hotmartProduct.update({
             where: {
                 id: eventData.payload?.product?.id,
             },

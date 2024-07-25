@@ -1,11 +1,12 @@
 "use server";
 
 import prisma from "/app/_lib/prisma";
-import { insertHotmartOrderEvent } from "./utils/insertHotmartOrderEvent"
+import { insertHotmartOrderEvent } from "./insertHotmartOrderEvent"
+import { updateHotmartOrderEvent } from "./updateHotmartOrderEvent";
 
-export async function handleHotmartOrderNote(eventData) {
+export async function handleHotmartOrderNoteEvent(eventData) {
     try {
-        console.log('Handling Hotmart order note for requestId:', eventData.requestId);
+        console.log('Handling HotmartOrderNote for requestId:', eventData.requestId);
         const existingHotmartOrderNoteRequestId = await prisma.hotmartOrderNote.findFirst({
             where: {
                 externalWebhookHotmartReceiver: {
@@ -31,25 +32,24 @@ export async function handleHotmartOrderNote(eventData) {
                 },
             });
             if (!existingHotmartOrderNotePurchaseTransactionId) {
-                console.log('HotmartPurchaseTransactionId does not exist in our database, creating a new one HotmartOrderEvent')
+                console.log('HotmartPurchaseTransactionId does not exist in our database, creating a new one HotmartOrderNote')
                 await insertHotmartOrderEvent(eventData);
                 return {
-                    status:'sucess',
+                    status: 'sucess',
                     message: 'New HotmartOrderEvent created'
                 }
             }
             else {
                 console.log('There is already a record with this HotmartPurchaseTransactionId in our database', eventData.payload.purchase?.transaction)
+                await updateHotmartOrderEvent(eventData, existingHotmartOrderNotePurchaseTransactionId)
                 return {
-                    status:'error',
-                    message: 'Duplicate HotmartPurchaseTransactionId'
+                    status: 'sucess',
+                    message: 'Updated HotmartOrderNoteId'
                 }
             }
         }
-        else {
-            console.log('There is already a record with this RequestId in our database', eventData.requestId)
-        }
     } catch (error) {
         console.error('Error handling Hotmart order note:', error);
+        throw error;
     }
 }

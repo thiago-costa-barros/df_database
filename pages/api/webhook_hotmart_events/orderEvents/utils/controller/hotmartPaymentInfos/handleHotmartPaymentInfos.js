@@ -17,6 +17,7 @@ export async function handleHotmartPaymentInfos(eventData, parseDate, hotmartPur
                 installmentNumbers: eventData.payload?.purchase.payment?.installments_number,
             },
         });
+        console.log('HotmartPaymentInfos created:', hotmartPaymentInfos.id+". HotmartPurchaseId: ", hotmartPurchaseId);
         return hotmartPaymentInfos;
     } catch (error) {
         console.error('Error creating HotmartPaymentInfos:', error);
