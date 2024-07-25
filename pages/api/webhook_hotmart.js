@@ -11,57 +11,57 @@ dotenv.config();
 
 export default async function handler(req, res) {
   console.log('Starting handler'); // Log de debug
-  if (req.method === 'POST') {
-    console.log('Method POST received'); // Log de debug
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  };
 
-    if (!verifyToken(req)) {
-      console.log('Invalid tokens, access denied'); // Log de debug
-      return res.status(403).json({ message: 'Forbidden' });
+  console.log('Method POST received'); // Log de debug
+  res.status(200).json({ message: 'Webhook processed successfully' });
+
+  if (!verifyToken(req)) {
+    console.log('Invalid tokens, access denied'); // Log de debug
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+
+  try {
+    const data = req.body;
+    console.log("Webhook received: ", data.event);
+
+    if (!prisma) {
+      throw new Error('Prisma Client not instantiated correctly');
     }
 
-    try {
-      const data = req.body;
-      console.log("Webhook received: ", data.event);
+    if (!prisma.externalWebhookHotmartReceiver) {
+      throw new Error('Model ExternalWebhookHotmartReceiver not founded in Prisma Client');
+    }
 
-      if (!prisma) {
-        throw new Error('Prisma Client not instantiated correctly');
+    console.log('Checking if there is a ReceiverId in out database: ', data.id)
+    const existingExternalWebhookReceiverId = await prisma.externalWebhookHotmartReceiver.findUnique({
+      where: {
+        requestId: data.id,
+        deletionDate: null,
       }
+    });
+    if (!existingExternalWebhookReceiverId) {
+      console.log('Creating a new ExternalWebhookReceiver:')
+      const parseDate = (bigintDate) => bigintDate ? new Date(parseInt(bigintDate)) : null;
+      await insertExternalWebhookReceiver(data, parseDate);
 
-      // Verifique se o modelo está definido no Prisma Client
-      if (!prisma.externalWebhookHotmartReceiver) {
-        throw new Error('Model ExternalWebhookHotmartReceiver not founded in Prisma Client');
-      }
-
-      console.log('Checking if there is a ReceiverId in out database: ', data.id)
-      const existingExternalWebhookReceiverId = await prisma.externalWebhookHotmartReceiver.findUnique({
+      const newExternalWebhookHotmartReceiver = await prisma.externalWebhookHotmartReceiver.findUnique({
         where: {
           requestId: data.id,
           deletionDate: null,
         }
       });
-      if (!existingExternalWebhookReceiverId) {
-        console.log('Creating a new ExternalWebhookReceiver:')
-        const parseDate = (bigintDate) => bigintDate ? new Date(parseInt(bigintDate)) : null;
-        await insertExternalWebhookReceiver(data, parseDate);
-
-        const newExternalWebhookHotmartReceiver = await prisma.externalWebhookHotmartReceiver.findUnique({
-          where: {
-            requestId: data.id,
-            deletionDate: null,
-          }
-        });
-        console.log('Webhook processed successfully. Checking routes events');
-        await routeEventHotmartWebhook(newExternalWebhookHotmartReceiver.eventName, newExternalWebhookHotmartReceiver);
-      }
-      else {
-        console.log("ExternalWebhookHotmartReceiver already exists: ", existingExternalWebhookReceiverId.requestId);
-      }
-    } catch (error) {
-      console.error('Error processing webhook:', error);
-      throw error;
+      console.log('Webhook processed successfully. Checking routes events');
+      await routeEventHotmartWebhook(newExternalWebhookHotmartReceiver.eventName, newExternalWebhookHotmartReceiver);
     }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    else {
+      console.log("ExternalWebhookHotmartReceiver already exists: ", existingExternalWebhookReceiverId.requestId);
+    }
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    throw error;
   }
 }
